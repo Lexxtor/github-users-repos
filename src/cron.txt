@@ -1,0 +1,1 @@
+*/10 * * * * /var/www/html/yii load-github-users-repos
