@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 class SiteController extends Controller
 {
@@ -20,12 +21,19 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
+     * Показывает список репозиториев.
      *
      * @return string
+     * @throws NotFoundHttpException если список не сохранен в кэше
      */
     public function actionIndex()
     {
-        return $this->render('list', ['items' => Yii::$app->cache->get('usersRepos')]);
+        $items = Yii::$app->cache->get('usersRepos');
+
+        if (!$items) {
+            throw new NotFoundHttpException('Список не загружен.');
+        }
+
+        return $this->render('list', ['items' => $items]);
     }
 }
