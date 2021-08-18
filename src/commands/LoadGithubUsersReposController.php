@@ -2,6 +2,7 @@
 
 namespace app\commands;
 
+use app\models\GithubUser;
 use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
@@ -12,40 +13,41 @@ use yii\helpers\Json;
  */
 class LoadGithubUsersReposController extends Controller
 {
-    public function actionIndex()
+    protected static $curl;
+
+    public function actionIndex(): int
     {
-        $users = Yii::$app->params['githubUsers'];
+        $users = GithubUser::find()->select('name')->column();
         $usersRepos = [];
         foreach ($users as $user) {
-            $usersRepos = array_merge($usersRepos, static::getUserRepos($user));
+            $usersRepos[] = static::getUserRepos($user);
         }
+        $usersRepos = array_merge(...$usersRepos);
 
         usort($usersRepos, function ($a, $b) {
-            if ($a['updated'] < $b['updated'])
-                return 1;
-            elseif ($a['updated'] > $b['updated'])
-                return -1;
-            else
-                return 0;
+            return $b['updated'] <=> $a['updated'];
         });
 
         $usersRepos = array_slice($usersRepos, 0, 10);
 
         Yii::$app->cache->set('usersRepos', $usersRepos);
+        Yii::$app->cache->set('usersReposDate', time());
 
         return ExitCode::OK;
     }
 
-    public static function getUserRepos($user)
+    public static function getUserRepos($user): array
     {
-        $curl = curl_init();
-        curl_setopt_array($curl, [
+        static::$curl ?? static::$curl = curl_init();
+
+        curl_setopt_array(static::$curl, [
             CURLOPT_URL => "https://api.github.com/users/$user/repos?sort=updated&per_page=10",
             CURLOPT_USERAGENT => 'lexxtor',
             CURLOPT_RETURNTRANSFER => true,
         ]);
-        $json = curl_exec($curl);
-        if (curl_getinfo($curl, CURLINFO_HTTP_CODE) != 200) {
+        $json = curl_exec(static::$curl);
+
+        if (curl_getinfo(static::$curl, CURLINFO_HTTP_CODE) != 200) {
             return [];
         }
 

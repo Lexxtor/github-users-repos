@@ -1,6 +1,7 @@
 <?php
 
 $params = require __DIR__ . '/params.php';
+$db = require __DIR__ . '/db.php';
 
 $config = [
     'id' => 'basic',
@@ -15,6 +16,7 @@ $config = [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => '0bw58QNWJcEGJXbZWBaqHxAmd9KDHDoP',
         ],
+        'db' => $db,
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
@@ -41,14 +43,13 @@ $config = [
                 ],
             ],
         ],
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+//                'users' => 'GithubUser/index'
             ],
         ],
-        */
     ],
     'params' => $params,
 ];

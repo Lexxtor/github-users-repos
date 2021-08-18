@@ -4,18 +4,18 @@ services:
 #    image: redis:alpine
 #    container_name: ${APP_NAME}_redis
 #
-#  postgres:
-#    image: library/postgres:alpine
-#    container_name: ${APP_NAME}_postgres
-#    volumes:
-#      - ./docker/postgres:${PGDATA_PATH}
-#    environment:
-#      - POSTGRES_USER=${POSTGRES_USER}
-#      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-#      - POSTGRES_DB=${POSTGRES_DB}
-#      - PGDATA=${PGDATA_PATH}/pgdata
-#    ports:
-#      - 5432:5432
+  postgres:
+    image: library/postgres:alpine
+    container_name: ${APP_NAME}_postgres
+    volumes:
+      - ./docker/postgres:${PGDATA_PATH}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - PGDATA=${PGDATA_PATH}/pgdata
+    ports:
+      - 5432:5432
 
   nginx:
     image: library/nginx:alpine
